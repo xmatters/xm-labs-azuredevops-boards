@@ -1,5 +1,6 @@
 /**
  * This step can be used to create an Azure DevOps Board work item. It assumes default work item types and fields.
+ * Depending on the type of work item there maybe more or less fields or different field name for similar data.
  */
 
 const contentType = "application/json-patch+json";
@@ -17,9 +18,7 @@ var apiRequest = http.request({
 });
 
 console.log('Work Item Type: ' + String(input['workItemType']));
-console.log('INFO:Adding work item fields');
-console.log('Title: ' + String(input['workItemTitle']));
-console.log('Priority: ' + String(input['workItemPriority']));
+console.log('INFO: Building work item');
 
 var body = [
     {
@@ -36,10 +35,10 @@ var body = [
     }
 ];
 
+//If work item type is a bug then update bug fields else it is any other type update the appropriate fields.
 if (String(workItemType).localeCompare('bug', 'en', { sensitivity: 'base' }) === 0) {
-
     if (input['workItemDescription'] !== "" && input['workItemDescription'] !== null && input['workItemDescription'] !== undefined) {
-        console.log('Repro Steps: ' + String(input['workItemDescription']));
+        //console.log('Repro Steps: ' + String(input['workItemDescription']));
         reproSteps = {
             "op": "add",
             "path": "/fields/Microsoft.VSTS.TCM.ReproSteps",
@@ -49,7 +48,7 @@ if (String(workItemType).localeCompare('bug', 'en', { sensitivity: 'base' }) ===
         body.push(reproSteps);
     }
     if (input['workItemSystem'] !== "" && input['workItemSystem'] !== null && input['workItemSystem'] !== undefined) {
-        console.log('System Info: ' + String(input['workItemSystem']));
+        //console.log('System Info: ' + String(input['workItemSystem']));
         systemInfo = {
             "op": "add",
             "path": "/fields/Microsoft.VSTS.TCM.SystemInfo",
@@ -60,7 +59,7 @@ if (String(workItemType).localeCompare('bug', 'en', { sensitivity: 'base' }) ===
     }
 
     if (input['workItemRisk'] !== "" && input['workItemRisk'] !== null && input['workItemRisk'] !== undefined) {
-        console.log('Severity: ' + String(input['workItemRisk']));
+        //console.log('Severity: ' + String(input['workItemRisk']));
         severity = {
             "op": "add",
             "path": "/fields/Microsoft.VSTS.Common.Severity",
@@ -71,7 +70,7 @@ if (String(workItemType).localeCompare('bug', 'en', { sensitivity: 'base' }) ===
     }
 } else {
     if (input['workItemDescription'] !== "" && input['workItemDescription'] !== null && input['workItemDescription'] !== undefined) {
-        console.log('Description: ' + String(input['workItemDescription']));
+        //console.log('Description: ' + String(input['workItemDescription']));
         description = {
             "op": "add",
             "path": "/fields/System.Description",
@@ -82,9 +81,10 @@ if (String(workItemType).localeCompare('bug', 'en', { sensitivity: 'base' }) ===
     }
 }
 
+//If work item is a feature update the appropriate fields
 if (String(workItemType).localeCompare('feature', 'en', { sensitivity: 'base' }) === 0 || String(workItemType).localeCompare('user story', 'en', { sensitivity: 'base' }) === 0 || String(workItemType).localeCompare('epic', 'en', { sensitivity: 'base' }) === 0) {
     if (input['workItemRisk'] !== "" && input['workItemRisk'] !== null && input['workItemRisk'] !== undefined) {
-        console.log('Risk: ' + String(input['workItemRisk']));
+        //console.log('Risk: ' + String(input['workItemRisk']));
         risk = {
             "op": "add",
             "path": "/fields/Microsoft.VSTS.Common.Risk",
@@ -95,7 +95,7 @@ if (String(workItemType).localeCompare('feature', 'en', { sensitivity: 'base' })
     }
 
     if (input['workItemValueArea'] !== "" && input['workItemValueArea'] !== null && input['workItemValueArea'] !== undefined) {
-        console.log('Value Area: ' + String(input['workItemValueArea']));
+        //console.log('Value Area: ' + String(input['workItemValueArea']));
         valueArea = {
             "op": "add",
             "path": "/fields/Microsoft.VSTS.Common.ValueArea",
@@ -108,6 +108,7 @@ if (String(workItemType).localeCompare('feature', 'en', { sensitivity: 'base' })
 
 bodyString = JSON.stringify(body);
 
+console.log('INFO: Sending create work item request');
 try {
     var apiResponse = apiRequest.write(bodyString);
 } catch (e) {
@@ -122,6 +123,8 @@ if (apiResponse.statusCode === 200) {
     output['workItemId'] = payload.id;
     output['workItemState'] = payload.fields['System.State'];
     output['workItemUrl'] = payload.url;
+
+    console.log('INFO: Work item creation complete');
 } else if (apiResponse.statusCode === 401) {
     throw ('ERROR:Azure DevOps:Unauthorized.');
 } else if (apiResponse.statusCode === 400) {
@@ -133,5 +136,3 @@ if (apiResponse.statusCode === 200) {
 } else {
     throw ('ERROR:Azure DevOps:Unknown');
 }
-
-
