@@ -42,39 +42,39 @@ var userStoryWorkItemFields = ['Microsoft.VSTS.Common.ValueArea','Microsoft.VSTS
 var testCaseWorkItemFields = ['Microsoft.VSTS.TCM.AutomationStatus','Microsoft.VSTS.TCM.Steps','Microsoft.VSTS.TCM.LocalDataSource'];
 
 //Load values common for all work item types
-loadValues(commonWorkItemFields, payload.eventType);
+loadValues(commonWorkItemFields);
 
 //Load values specific to each work item type
 if (payload.resource.fields['System.WorkItemType'] == 'Bug'){
     output['workItemDescription'] = payload.resource.fields['Microsoft.VSTS.TCM.ReproSteps'];
-    loadValues(bugWorkItemFields, payload.eventType);
+    loadValues(bugWorkItemFields);
 } else if (payload.resource.fields['System.WorkItemType'] == 'Epic' || payload.resource.fields['System.WorkItemType'] == 'Feature') {
     output['workItemDescription'] = payload.resource.fields['System.Description'];
-    loadValues(epicFeatureWorkItemFields, payload.eventType);
+    loadValues(epicFeatureWorkItemFields);
 } else if (payload.resource.fields['System.WorkItemType'] == 'Issue') {
     output['workItemDescription'] = payload.resource.fields['System.Description'];
-    loadValues(issueWorkItemFields, payload.eventType);
+    loadValues(issueWorkItemFields);
 } else if (payload.resource.fields['System.WorkItemType'] == 'Task') {
     output['workItemDescription'] = payload.resource.fields['System.Description'];
-    loadValues(taskWorkItemFields, payload.eventType);
+    loadValues(taskWorkItemFields);
 } else if (payload.resource.fields['System.WorkItemType'] == 'User Story') {
     output['workItemDescription'] = payload.resource.fields['System.Description'];
-    loadValues(userStoryWorkItemFields, payload.eventType);
+    loadValues(userStoryWorkItemFields);
 } else if (payload.resource.fields['System.WorkItemType'] == 'Test Case') {
     output['workItemDescription'] = payload.resource.fields['System.Description'];
-    loadValues(testCaseWorkItemFields, payload.eventType);
+    loadValues(testCaseWorkItemFields);
 }
 
 
-function loadValues(workItemFields, eventType) {
+function loadValues(workItemFields) {
     //Check if event type is an update, because updated work item fields paths are slightly different
-    if (eventType != 'workitem.update') {
+    if (payload.eventType != 'workitem.updated') {
         output['workItemId'] = payload.resource.id;
         for (field in workItemFields) {
             fieldName = workItemFields[field].split('.').pop();
             output['workItem' + fieldName] = payload.resource.fields[workItemFields[field]];
         }
-    } else if (eventType == 'workitem.update') {
+    } else if (payload.eventType == 'workitem.updated') {
         output['workItemId'] = payload.resource.revision.id;
         for (field in workItemFields) {
             fieldName = workItemFields[field].split('.').pop();
