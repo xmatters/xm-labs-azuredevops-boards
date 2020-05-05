@@ -81,7 +81,7 @@ if (String(workItemType).localeCompare('bug', 'en', { sensitivity: 'base' }) ===
     }
 }
 
-//If work item is a feature update the appropriate fields
+//If work item is a feature/user story/epic update the appropriate fields
 if (String(workItemType).localeCompare('feature', 'en', { sensitivity: 'base' }) === 0 || String(workItemType).localeCompare('user story', 'en', { sensitivity: 'base' }) === 0 || String(workItemType).localeCompare('epic', 'en', { sensitivity: 'base' }) === 0) {
     if (input['workItemRisk'] !== "" && input['workItemRisk'] !== null && input['workItemRisk'] !== undefined) {
         //console.log('Risk: ' + String(input['workItemRisk']));
