@@ -32,57 +32,19 @@ re = new RegExp('(?<=^https:\/\/dev.azure.com/).+?(?=\/)', 'gs');
 organization = payload.resource.url.match(re);
 output.organization = organization[0];
 
-//Set lists of field names for the different types of workitems to use for loading values
-var commonWorkItemFields = ['System.AreaPath','System.TeamProject','System.IterationPath','System.WorkItemType','System.State','System.Reason','System.AssignedTo','System.CreatedDate','System.CreatedBy','System.ChangedDate','System.ChangedBy','System.CommentCount','System.Title','Microsoft.VSTS.Common.StateChangeDate','Microsoft.VSTS.Common.Priority','System.Tags','Microsoft.VSTS.Common.ActivatedDate','Microsoft.VSTS.Common.ActivatedBy'];
-var bugWorkItemFields = ['Microsoft.VSTS.Common.ValueArea','Microsoft.VSTS.Scheduling.StoryPoints','Microsoft.VSTS.Scheduling.RemainingWork','Microsoft.VSTS.Scheduling.OriginalEstimate','Microsoft.VSTS.Scheduling.CompletedWork','Microsoft.VSTS.Common.Severity','Microsoft.VSTS.TCM.SystemInfo'];
-var epicFeatureWorkItemFields = ['System.Description','Microsoft.VSTS.Common.ValueArea','Microsoft.VSTS.Common.Risk','Microsoft.VSTS.Scheduling.TargetDate','Microsoft.VSTS.Common.BusinessValue','Microsoft.VSTS.Common.TimeCriticality','Microsoft.VSTS.Scheduling.Effort','Microsoft.VSTS.Scheduling.StartDate'];
-var issueWorkItemFields = ['Microsoft.VSTS.Common.StackRank','Microsoft.VSTS.Scheduling.DueDate'];
-var taskWorkItemFields = ['Microsoft.VSTS.Scheduling.RemainingWork','Microsoft.VSTS.Scheduling.OriginalEstimate','Microsoft.VSTS.Scheduling.CompletedWork'];
-var userStoryWorkItemFields = ['Microsoft.VSTS.Common.ValueArea','Microsoft.VSTS.Common.Risk','Microsoft.VSTS.Scheduling.StoryPoints','System.BoardColumn','System.BoardColumnDone','Microsoft.VSTS.Common.AcceptanceCriteria'];
-var testCaseWorkItemFields = ['Microsoft.VSTS.TCM.AutomationStatus','Microsoft.VSTS.TCM.Steps','Microsoft.VSTS.TCM.LocalDataSource'];
-
-//Load values common for all work item types
-loadValues(commonWorkItemFields);
-
-//Load values specific to each work item type
-if (payload.resource.fields['System.WorkItemType'] == 'Bug'){
-    output['workItemDescription'] = payload.resource.fields['Microsoft.VSTS.TCM.ReproSteps'];
-    loadValues(bugWorkItemFields);
-} else if (payload.resource.fields['System.WorkItemType'] == 'Epic' || payload.resource.fields['System.WorkItemType'] == 'Feature') {
-    output['workItemDescription'] = payload.resource.fields['System.Description'];
-    loadValues(epicFeatureWorkItemFields);
-} else if (payload.resource.fields['System.WorkItemType'] == 'Issue') {
-    output['workItemDescription'] = payload.resource.fields['System.Description'];
-    loadValues(issueWorkItemFields);
-} else if (payload.resource.fields['System.WorkItemType'] == 'Task') {
-    output['workItemDescription'] = payload.resource.fields['System.Description'];
-    loadValues(taskWorkItemFields);
-} else if (payload.resource.fields['System.WorkItemType'] == 'User Story') {
-    output['workItemDescription'] = payload.resource.fields['System.Description'];
-    loadValues(userStoryWorkItemFields);
-} else if (payload.resource.fields['System.WorkItemType'] == 'Test Case') {
-    output['workItemDescription'] = payload.resource.fields['System.Description'];
-    loadValues(testCaseWorkItemFields);
-}
-
-
-function loadValues(workItemFields) {
-    //Check if event type is an update, because updated work item fields paths are slightly different
-    if (payload.eventType != 'workitem.updated') {
-        output['workItemId'] = payload.resource.id;
-        for (field in workItemFields) {
-            fieldName = workItemFields[field].split('.').pop();
-            output['workItem' + fieldName] = payload.resource.fields[workItemFields[field]];
-        }
-    } else if (payload.eventType == 'workitem.updated') {
-        output['workItemId'] = payload.resource.revision.id;
-        for (field in workItemFields) {
-            fieldName = workItemFields[field].split('.').pop();
-            output['workItem' + fieldName] = payload.resource.revision.fields[workItemFields[field]];
-        }
-    } else {
-        console.log('ERROR: Unable to load output fields, because unknown event type.');
+//Check if event type is an update, because updated work item fields paths are slightly different
+if (payload.eventType != 'workitem.updated') {
+    output['workItemId'] = payload.resource.id;
+    for (field in payload.resource.fields) {
+        fieldName = field.split('.').pop();
+        output['workItem' + fieldName] = payload.resource.fields[fieldName];
     }
+} else if (payload.eventType == 'workitem.updated') {
+    output['workItemId'] = payload.resource.revision.id;
+    for (field in payload.resource.revision.fields) {
+        fieldName = field.split('.').pop();
+        output['workItem' + fieldName] = payload.resource.revision.fields[fieldName];
+    }
+} else {
+    console.log('ERROR: Unable to load output fields, because unknown event type.');
 }
-
-
