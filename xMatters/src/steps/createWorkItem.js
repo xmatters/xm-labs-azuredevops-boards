@@ -3,8 +3,18 @@
  * Depending on the type of work item there maybe more or less fields or different field name for similar data.
  */
 
+var suppressNotifications = 'false';
+if (input['suppressNotifications'] !== "" && input['suppressNotifications'] !== null && input['suppressNotifications'] !== undefined) {
+    suppressNotifications = input['suppressNotifications'].trim().toLowerCase();
+    if (suppressNotifications != 'true' && suppressNotifications != 'false') {
+        console.log('WARN: suppressNofication set, but invalid value. Must be either true or false.');
+        console.log('WARN: Defaulting suppressNotification to false');
+        suppressNotifications = 'false';
+    }
+}
+
 const contentType = "application/json-patch+json";
-const path = '/' + input['organization'] + '/' + input['project'] + '/_apis/wit/workitems/$' + input['workItemType'] + '?api-version=5.1';
+const path = '/' + input['organization'] + '/' + input['project'] + '/_apis/wit/workitems/$' + input['workItemType'] + '?suppressNotifications='+ suppressNotifications +'&api-version=5.1';
 
 var workItemType = input['workItemType'];
 
@@ -38,7 +48,6 @@ var body = [
 //If work item type is a bug then update bug fields else it is any other type update the appropriate fields.
 if (String(workItemType).localeCompare('bug', 'en', { sensitivity: 'base' }) === 0) {
     if (input['workItemDescription'] !== "" && input['workItemDescription'] !== null && input['workItemDescription'] !== undefined) {
-        //console.log('Repro Steps: ' + String(input['workItemDescription']));
         reproSteps = {
             "op": "add",
             "path": "/fields/Microsoft.VSTS.TCM.ReproSteps",
@@ -48,7 +57,6 @@ if (String(workItemType).localeCompare('bug', 'en', { sensitivity: 'base' }) ===
         body.push(reproSteps);
     }
     if (input['workItemSystem'] !== "" && input['workItemSystem'] !== null && input['workItemSystem'] !== undefined) {
-        //console.log('System Info: ' + String(input['workItemSystem']));
         systemInfo = {
             "op": "add",
             "path": "/fields/Microsoft.VSTS.TCM.SystemInfo",
@@ -59,7 +67,6 @@ if (String(workItemType).localeCompare('bug', 'en', { sensitivity: 'base' }) ===
     }
 
     if (input['workItemRisk'] !== "" && input['workItemRisk'] !== null && input['workItemRisk'] !== undefined) {
-        //console.log('Severity: ' + String(input['workItemRisk']));
         severity = {
             "op": "add",
             "path": "/fields/Microsoft.VSTS.Common.Severity",
@@ -70,7 +77,6 @@ if (String(workItemType).localeCompare('bug', 'en', { sensitivity: 'base' }) ===
     }
 } else {
     if (input['workItemDescription'] !== "" && input['workItemDescription'] !== null && input['workItemDescription'] !== undefined) {
-        //console.log('Description: ' + String(input['workItemDescription']));
         description = {
             "op": "add",
             "path": "/fields/System.Description",
@@ -122,7 +128,7 @@ if (apiResponse.statusCode === 200) {
 
     output['workItemId'] = payload.id;
     output['workItemState'] = payload.fields['System.State'];
-    output['workItemUrl'] = payload.url;
+    output['workItemUrl'] = payload._links.html.href;
 
     console.log('INFO: Work item creation complete');
 } else if (apiResponse.statusCode === 401) {
