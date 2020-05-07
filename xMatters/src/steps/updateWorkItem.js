@@ -14,7 +14,7 @@ if (input['suppressNotifications'] !== "" && input['suppressNotifications'] !== 
 }
 
 const contentType = "application/json-patch+json";
-const path = '/' + input['organization'].trim() + '/' + input['project'].trim() + '/_apis/wit/workitems/' + input['workItemId'] + '?suppressNotifications=' + suppressNotifications + '&api-version=5.1';
+const path = '/' + input['organization'].trim() + '/' + input['workItemTeamProject'].trim() + '/_apis/wit/workitems/' + input['workItemId'] + '?suppressNotifications=' + suppressNotifications + '&api-version=5.1';
 
 var apiRequest = http.request({
     'endpoint': 'Azure DevOps',
@@ -129,12 +129,11 @@ if (input['workItemRisk'] !== "" && input['workItemRisk'] !== null && input['wor
     body.push(risk);
 }
 if (input['workItemTags'] !== "" && input['workItemTags'] !== null && input['workItemTags'] !== undefined) {
-    tagList = input['workItemTags'].trim().split(',').join(';');
     risk = {
         "op": "add",
         "path": "/fields/System.Tags",
         "from": null,
-        "value": tagList
+        "value": input['workItemTags']
     };
     body.push(risk);
 }

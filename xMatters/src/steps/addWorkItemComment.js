@@ -3,7 +3,7 @@
  */
 
 const contentType = "application/json-patch+json";
-const path = '/' + input['organization'] + '/' + input['project'] + '/_apis/wit/workitems/' + input['workItemId'] + '/comments?api-version=5.1-preview.3';
+const path = '/' + input['organization'].trim() + '/' + input['workItemTeamProject'].trim() + '/_apis/wit/workitems/' + input['workItemId'] + '/comments?api-version=5.1-preview.3';
 
 var apiRequest = http.request({
     'endpoint': 'Azure DevOps',
@@ -15,7 +15,7 @@ var apiRequest = http.request({
 });
 
 body = {
-    "text": input['comment']
+    "text": input['workItemComment']
 };
 
 try {
@@ -24,21 +24,23 @@ try {
     throw ('Azure DevOps:Issue submitting work item add comment request:' + e);
 }
 
-output['responseCode'] = apiResponse.statusCode;
-
 if (apiResponse.statusCode === 200) {
     payload = JSON.parse(apiResponse.body);
 
     output['commentId'] = payload.id;
-    output['commentUrl'] = payload.url;
+    output['result'] = 'succeeded';
 } else if (apiResponse.statusCode === 401) {
+    output['result'] = 'failed';
     throw ('Azure DevOps:Unauthorized');
 } else if (apiResponse.statusCode === 400) {
+    output['result'] = 'failed';
     response = JSON.parse(apiResponse.body);
     throw ('Azure DevOps:' + response['message']);
 } else if (apiResponse.statusCode === 404) {
+    output['result'] = 'failed';
     response = JSON.parse(apiResponse.body);
     throw ('Azure DevOps:' + response['message']);
 } else {
+    output['result'] = 'failed';
     throw ('Azure DevOps:Unknown');
 }
