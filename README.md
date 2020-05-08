@@ -29,7 +29,7 @@ For the trigger Service Hooks with in Azure DevOps will send notifications to th
 The other steps in the integration can be used to create and update Work Items.  You can also add comments to a work item. These steps have few required values like the organization name, project name, and work item ID(required to update or add comments).  If utilizing the included trigger it will provide this informaiton as outputs.
 
 ### :red_circle: WARNING 
-Please keep in mind that if you are not careful you can create a loop between Azure DevOps and xMatters.  For example if you have a Service Hook to notify xMatters of a Work Item update that triggers a flow that updates a Work Item.  In these cases the create and update steps have an option called *suppressNotifications".  If this option is set to "true" it will tell Azure DevOps to not send a notification for this particular action. You can also make sure that your flow logic is checking for certain conditions before updating a work item. If set to defaults xMatters will catch floods and suppress them.
+> Please keep in mind that if you are not careful you can create a loop between Azure DevOps and xMatters.  For example if you have a Service Hook to notify xMatters of a Work Item update that triggers a flow that updates a Work Item.  In these cases the create and update steps have an option called *suppressNotifications".  If this option is set to "true" it will tell Azure DevOps to not send a notification for this particular action. You can also make sure that your flow logic is checking for certain conditions before updating a work item. If set to defaults xMatters will catch floods and suppress them.
 
 ---
 ## Installation
@@ -119,7 +119,7 @@ We will now set things up on the Azure DevOps side, but we will come back to xMa
 ### Azure DevOps - Setup Credentials for xMatters
 To use the Create/Update Work Item and Add Comment steps we need to setup credentials for xMatters to use to connect to Azure DevOps.  
 ### :large_orange_diamond: WARNING
-We will be using a Personal Access Token and as good practice you probably want to use a specific Azure DevOps account for integrations. If you use an actual person's account and it is deactivated or deleted then the integration will break.
+> We will be using a Personal Access Token and as good practice you probably want to use a specific Azure DevOps account for integrations. If you use an actual person's account and it is deactivated or deleted then the integration will break.
 
 1. Login to Azure DevOps as the user you want to create the Personal Access Token under
 2. In the top right select the icon with a person with a gear on it.  This will open user settings menu where you will select **Personal access tokens**
