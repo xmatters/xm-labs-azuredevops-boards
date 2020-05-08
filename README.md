@@ -118,7 +118,7 @@ We will now set things up on the Azure DevOps side, but we will come back to xMa
 
 ### Azure DevOps - Setup Credentials for xMatters
 To use the Create/Update Work Item and Add Comment steps we need to setup credentials for xMatters to use to connect to Azure DevOps.  
-### :yellow_circle: WARNING
+### :large_orange_diamond: WARNING
 We will be using a Personal Access Token and as good practice you probably want to use a specific Azure DevOps account for integrations. If you use an actual person's account and it is deactivated or deleted then the integration will break.
 
 1. Login to Azure DevOps as the user you want to create the Personal Access Token under
