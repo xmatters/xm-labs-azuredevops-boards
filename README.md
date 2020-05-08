@@ -31,7 +31,7 @@ The Service Hooks with in Azure DevOps will send notifications to the Work Item 
 
 There are steps to create a Work Item, update Work Items, and add comments to a Work Item. These steps have a few required values like the organization name, project name, and work item ID(required to update or add comments). If utilizing the included trigger it will provide this informaiton as outputs.
 
-### :warning: WARNING 
+#### :warning: WARNING 
 > Please keep in mind that if you are not careful you can create a loop between Azure DevOps and xMatters. For example if you have a Service Hook to notify xMatters of a Work Item update that triggers a flow that updates a Work Item. In these cases the create and update steps have an option called "suppressNotifications".  If this option is set to "true" it will tell Azure DevOps to not send a notification for this particular action. You can also make sure that your flow logic is checking for certain conditions before updating a work item. If set to defaults xMatters will catch floods and suppress them.
 
 ---
