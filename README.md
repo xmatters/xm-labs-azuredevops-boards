@@ -1,7 +1,8 @@
 # Azure DevOps - Boards
 This is a closed-loop integration with Azure DevOps Boards. It has a trigger that can be used to start a flow when there is a Work Item event like work item created or updated.  The included steps also allow you to create or update a work item and add comments.
 
-[![Disclamer](https://raw.githubusercontent.com/xmatters/xMatters-Labs/master/media/disclaimer.png)](https://support.xmatters.com/hc/en-us/community/topics)
+### :scroll: DISCLAIMER
+> ### The integrations here in the xMatters Labs are either still in-progress or experimental in nature, so we can offer only limited support here on GitHub. If you do run into any problems or have some feedback, join the discussion and ask the community at [https://support.xmatters.com/hc/en-us/community/topics](https://support.xmatters.com/hc/en-us/community/topics).
 
 ---
 ## Pre-Requisites
