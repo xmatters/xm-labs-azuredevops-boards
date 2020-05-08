@@ -28,6 +28,12 @@ var apiRequest = http.request({
 console.log('Work Item Type: ' + String(input['workItemType']));
 console.log('INFO: Building work item');
 
+/**
+ * Using this pattern you can add values to other work item fields as well. You will need to determine
+ * the path to the field. It seems even if a work item type does not show a field in the UI it still 
+ * exists and you can set it. For instance if you set ReproSteps for an issue it will not show in UI, 
+ * but then later changes its type to bug the ReproSteps will show in the UI.
+ */
 var body = [];
 if (input['workItemType'] !== "" && input['workItemType'] !== null && input['workItemType'] !== undefined) {
     type = {
@@ -146,8 +152,6 @@ try {
 } catch (e) {
     throw ('Azure DevOps:Issue submitting work item create request. \n' + e);
 }
-
-output['responseCode'] = apiResponse.statusCode;
 
 if (apiResponse.statusCode === 200) {
     payload = JSON.parse(apiResponse.body);
