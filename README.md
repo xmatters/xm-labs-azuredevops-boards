@@ -37,9 +37,9 @@ There are steps to create a Work Item, update Work Items, and add comments to a 
 ---
 ## Installation
 ### xMatters - Setup Inbound Trigger
-### :blue_book: NOTE
+#### :blue_book: NOTE
 > If you do not already have an xMatters user specifically for integrations it is recommended to create one. This account should only be used for integrations and not need web login permissions. 
-### :warning: WARNING
+#### :warning: WARNING
 > If the account you choose to use for this integration is removed or made inactive then the integration will break.
 
 1. Under this integration user create a new API key to use with Azure DevOps. [Instructions](https://help.xmatters.com/ondemand/user/apikeys.htm)
@@ -127,10 +127,10 @@ We will now set things up on the Azure DevOps side, but we will come back to xMa
 
 ### Azure DevOps - Setup Credentials for xMatters
 To use the Create/Update Work Item and Add Comment steps we need to setup credentials for xMatters to use to connect to Azure DevOps.  
-### :blue_book: NOTE
+#### :blue_book: NOTE
 > We will be using a Personal Access Token and as good practice you probably want to use a specific Azure DevOps account for integrations. 
 
-### :warning: WARNING
+#### :warning: WARNING
 >If you use an actual person's account and it is deactivated or deleted then the integration will break.
 
 1. Login to Azure DevOps as the user you want to create the Personal Access Token under
@@ -251,7 +251,7 @@ review the document [AzureDevOpsWorkItemFields.csv](AzureDevOps/AzureDevOpsWorkI
 ### Azure DevOps - Update Work Item
 This is very similar to the Create Work Item step and you can modify to add more fields to update just like the create step.
 
-### :warning: WARNING
+#### :warning: WARNING
 > Keep in mind that if you modify the update step to add more fields make sure to follow the if statement pattern that checks the value of the step input. If you pass an empty value to Azure DevOps on an update it will either clear or default the filed value.
 
 The update step does not have an append option for things like Description. Azure DevOps API does not have this as a feature, so in order to do this it would require making a request to get the current values. appending the new value, and submitting the update request.
