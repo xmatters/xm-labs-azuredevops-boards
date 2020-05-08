@@ -21,22 +21,28 @@ This is a closed-loop integration with Azure DevOps Boards. It has a trigger tha
     * [createWorkItem.js](xMatters/src/steps/createWorkItem.js) - source code for step to create a Work Item
     * [updateWorkItem.js](xMatters/src/steps/updateWorkItem.js) - source code for step to update a Work Item
     * [addWorkItemComment.js](xMatters/src/steps/addWorkItemComment.js) - source code for step to add comments to Work Item
+* Azure DevOps
+    * [AzureDevOpsWorkItemFields.csv](AzureDevOps/AzureDevOpsWorkItemFields.csv) - CSV table of work item fields I discovered
 
 ---
 ## How It Works
-For the trigger Service Hooks with in Azure DevOps will send notifications to the Work Item Event trigger in xMatters. This trigger can start a flow with in xMatters than can run any other steps or send send notifications as you like.  It can also utilize the other steps in this integration to manipulate Work Items.
+The Service Hooks with in Azure DevOps will send notifications to the Work Item Event trigger in xMatters. This trigger can start a flow with in xMatters than can run any other steps or send notifications as you like.  It can also utilize the other Azure DevOps steps in this integration to manipulate Work Items.
 
-The other steps in the integration can be used to create and update Work Items.  You can also add comments to a work item. These steps have few required values like the organization name, project name, and work item ID(required to update or add comments).  If utilizing the included trigger it will provide this informaiton as outputs.
+There are steps to create a Work Item, update Work Items, and add comments to a Work Item. These steps have a few required values like the organization name, project name, and work item ID(required to update or add comments). If utilizing the included trigger it will provide this informaiton as outputs.
 
-### :red_circle: WARNING 
-> Please keep in mind that if you are not careful you can create a loop between Azure DevOps and xMatters.  For example if you have a Service Hook to notify xMatters of a Work Item update that triggers a flow that updates a Work Item.  In these cases the create and update steps have an option called *suppressNotifications".  If this option is set to "true" it will tell Azure DevOps to not send a notification for this particular action. You can also make sure that your flow logic is checking for certain conditions before updating a work item. If set to defaults xMatters will catch floods and suppress them.
+### :warning: WARNING 
+> Please keep in mind that if you are not careful you can create a loop between Azure DevOps and xMatters. For example if you have a Service Hook to notify xMatters of a Work Item update that triggers a flow that updates a Work Item. In these cases the create and update steps have an option called "suppressNotifications".  If this option is set to "true" it will tell Azure DevOps to not send a notification for this particular action. You can also make sure that your flow logic is checking for certain conditions before updating a work item. If set to defaults xMatters will catch floods and suppress them.
 
 ---
 ## Installation
 ### xMatters - Setup Inbound Trigger
-### :large_orange_diamond: NOTE
-> If you do not already have an xMatters user specifically for integrations it is recommended to create one.  This account should only be used for integrations and not need web login permissions. If the account you choose to use for this integration is removed or made inactive then the integration will brake.
-1. Under this integration user create a new API key to use with Azure DevOps. *Make sure to note the key and secret for later when we configure Azure DevOps.* [Instructions](https://help.xmatters.com/ondemand/user/apikeys.htm)
+### :blue_book: NOTE
+> If you do not already have an xMatters user specifically for integrations it is recommended to create one. This account should only be used for integrations and not need web login permissions. 
+### :warning: WARNING
+> If the account you choose to use for this integration is removed or made inactive then the integration will break.
+
+1. Under this integration user create a new API key to use with Azure DevOps. [Instructions](https://help.xmatters.com/ondemand/user/apikeys.htm)
+    > :pencil2: *Make sure to note the key and secret for later when we configure Azure DevOps.*
 
     <kbd>
         <img src="media/xm-api-key.png" width="700">
@@ -62,6 +68,7 @@ The other steps in the integration can be used to create and update Work Items. 
     </kbd>
 
 6. On the Settings tab copy the trigger's URL and paste it in your notes for later.
+    > :pencil2: *Make sure to save in your notes for later when we configure Azure DevOps.*
 
     <kbd>
         <img src="media/xm-edit-trigger2.png" width="700">
@@ -119,7 +126,7 @@ We will now set things up on the Azure DevOps side, but we will come back to xMa
 
 ### Azure DevOps - Setup Credentials for xMatters
 To use the Create/Update Work Item and Add Comment steps we need to setup credentials for xMatters to use to connect to Azure DevOps.  
-### :large_orange_diamond: NOTE
+### :blue_book: NOTE
 > We will be using a Personal Access Token and as good practice you probably want to use a specific Azure DevOps account for integrations. If you use an actual person's account and it is deactivated or deleted then the integration will break.
 
 1. Login to Azure DevOps as the user you want to create the Personal Access Token under
@@ -152,7 +159,8 @@ To use the Create/Update Work Item and Add Comment steps we need to setup creden
         <img src="media/ado-patsetup-4.png" width="500">
     </kbd>
 
-6. Now copy the token that is generated.  Make sure you have a copy because once you close the window you can not see it again.
+6. Now copy the token that is generated.  
+    > :pencil2: *Make sure you have a copy because once you close the window you can not see it again.*
 
     <kbd>
         <img src="media/ado-patsetup-5.png" width="500">
@@ -220,6 +228,29 @@ The recipients in the event notification step in the exmaple workflow need to be
     * **Create Related Task** - this will create a Task work item and copy some of the information from the original work item
     * **Close Work Item** - this will close the original work item
 5. Also, if the responder adds a comment to their response it will be added as a comment to the work item
+
+---
+## Expanding
+These are some possible ways you can expand this integration with basic instructions.
+
+### Azure DevOps - Work Item Event Trigger
+The trigger provided has some standard outputs available for other steps to use. There is typically more information available about a work item
+and the trigger is trying to parse out all the fields. You will see these in the trigger's output in the Activity monitor. If you want to use
+one of these output values in another step copy or edit the trigger and add the output name to the trigger's Output configuration list.
+
+### Azure DevOps - Create Work Item
+This step includes some basic fields to configure when creating a new work item. If you want to set other fields that are not included you can
+find the path to the field and added it following the pattern in the step script.  I was unable to find a document that gave all the fields, so
+I would view the request from the **Azure DevOps - Work Item Event** trigger for the various available fields for each work item type. You can also
+review the document [AzureDevOpsWorkItemFields.csv](AzureDevOps/AzureDevOpsWorkItemFields.csv) I put together of what I found.
+
+### Azure DevOps - Update Work Item
+This is very similar to the Create Work Item step and you can modify to add more fields to update just like the create step.
+
+### :warning: WARNING
+> Keep in mind that if you modify the update step to add more fields make sure to follow the if statement pattern that checks the value of the step input. If you pass an empty value to Azure DevOps on an update it will either clear or default the filed value.
+
+The update step does not have an append option for things like Description. Azure DevOps API does not have this as a feature, so in order to do this it would require making a request to get the current values. appending the new value, and submitting the update request.
 
 ---
 ## Troubleshooting
