@@ -34,33 +34,34 @@ The other steps in the integration can be used to create and update Work Items. 
 ---
 ## Installation
 ### xMatters - Setup Inbound Trigger
-1.  If you do not already have an xMatters user specifically for integrations it is recommended to create one.  This account should only be used for integrations and not need web login permissions. If the account you choose to use for this integration is removed or made inactive then the integration will brake.
-2. Under this integration user create a new API key to use with Azure DevOps. *Make sure to note the key and secret for later when we configure Azure DevOps.* [Instructions](https://help.xmatters.com/ondemand/user/apikeys.htm)
+### :large_orange_diamond: NOTE
+> If you do not already have an xMatters user specifically for integrations it is recommended to create one.  This account should only be used for integrations and not need web login permissions. If the account you choose to use for this integration is removed or made inactive then the integration will brake.
+1. Under this integration user create a new API key to use with Azure DevOps. *Make sure to note the key and secret for later when we configure Azure DevOps.* [Instructions](https://help.xmatters.com/ondemand/user/apikeys.htm)
 
     <kbd>
         <img src="media/xm-api-key.png" width="700">
     </kbd>
 
-3. Import the example workflow. [Instructions](https://help.xmatters.com/ondemand/xmodwelcome/workflows/manage-workflows.htm)
+2. Import the example workflow. [Instructions](https://help.xmatters.com/ondemand/xmodwelcome/workflows/manage-workflows.htm)
 
     <kbd>
         <img src="media/xm-import-workflow.png" width="700">
     </kbd>
 
-4.  Modify the **Work Item Created** form in the imported workflow and give the integration user sender permissions on the form. [Instructions](https://help.xmatters.com/ondemand/xmodwelcome/communicationplanbuilder/formpermissions.htm)
+3.  Modify the **Work Item Created** form in the imported workflow and give the integration user sender permissions on the form. [Instructions](https://help.xmatters.com/ondemand/xmodwelcome/communicationplanbuilder/formpermissions.htm)
 
     <kbd>
         <img src="media/xm-sender-permissions.png" width="700">
     </kbd>
 
-5. Now open the corresponding flow **Work Item Created** and you will see a trigger at the top of the canvas called "**{Workflow Name} - Azure DevOps - Work Item Event**"
-6. Hover over the trigger step and select edit.
+4. Now open the corresponding flow **Work Item Created** and you will see a trigger at the top of the canvas called "**{Workflow Name} - Azure DevOps - Work Item Event**"
+5. Hover over the trigger step and select edit.
 
     <kbd>
         <img src="media/xm-edit-trigger.png" width="700">
     </kbd>
 
-7. On the Settings tab copy the trigger's URL and paste it in your notes for later.
+6. On the Settings tab copy the trigger's URL and paste it in your notes for later.
 
     <kbd>
         <img src="media/xm-edit-trigger2.png" width="700">
@@ -118,7 +119,7 @@ We will now set things up on the Azure DevOps side, but we will come back to xMa
 
 ### Azure DevOps - Setup Credentials for xMatters
 To use the Create/Update Work Item and Add Comment steps we need to setup credentials for xMatters to use to connect to Azure DevOps.  
-### :large_orange_diamond: WARNING
+### :large_orange_diamond: NOTE
 > We will be using a Personal Access Token and as good practice you probably want to use a specific Azure DevOps account for integrations. If you use an actual person's account and it is deactivated or deleted then the integration will break.
 
 1. Login to Azure DevOps as the user you want to create the Personal Access Token under
