@@ -252,7 +252,7 @@ review the document [AzureDevOpsWorkItemFields.csv](AzureDevOps/AzureDevOpsWorkI
 This is very similar to the Create Work Item step and you can modify to add more fields to update just like the create step.
 
 #### :warning: WARNING
-> Keep in mind that if you modify the update step to add more fields make sure to follow the if statement pattern that checks the value of the step input. If you pass an empty value to Azure DevOps on an update it will either clear or default the filed value.
+> Keep in mind that if you modify the update step to add more fields make sure to follow the if statement pattern that checks the value of the step input. If you pass an empty value to Azure DevOps on an update it will either clear or default the field value.
 
 The update step does not have an append option for things like Description. Azure DevOps API does not have this as a feature, so in order to do this it would require making a request to get the current values. appending the new value, and submitting the update request.
 
