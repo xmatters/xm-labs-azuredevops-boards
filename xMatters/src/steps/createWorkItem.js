@@ -143,6 +143,22 @@ if (input['workItemTags'] !== "" && input['workItemTags'] !== null && input['wor
     };
     body.push(risk);
 }
+if (input['parentWorkItemID'] !== "" && input['parentWorkItemID'] !== null && input['parentWorkItemID'] !== undefined) {
+    parent = {
+        "op": "add",
+        "path": "/relations/-",
+        "from": null,
+        "value": {
+            "rel": "System.LinkTypes.Hierarchy-Reverse",
+            "url": "https://dev.azure.com/" + input['organization'] + "/" + input['workItemTeamProject'] + "/_apis/wit/workItems/" + input['parentWorkItemID'],
+            "attributes": {
+                "isLocked": false,
+                "name": "Parent"
+            }
+        }
+    };
+    body.push(parent);
+}
 
 bodyString = JSON.stringify(body);
 

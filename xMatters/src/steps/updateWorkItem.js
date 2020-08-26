@@ -149,28 +149,44 @@ if (input['workItemTags'] !== "" && input['workItemTags'] !== null && input['wor
     };
     body.push(risk);
 }
+if (input['parentWorkItemID'] !== "" && input['parentWorkItemID'] !== null && input['parentWorkItemID'] !== undefined) {
+    parent = {
+        "op": "add",
+        "path": "/relations/-",
+        "from": null,
+        "value": {
+            "rel": "System.LinkTypes.Hierarchy-Reverse",
+            "url": "https://dev.azure.com/" + input['organization'] + "/" + input['workItemTeamProject'] + "/_apis/wit/workItems/" + input['parentWorkItemID'],
+            "attributes": {
+                "isLocked": false,
+                "name": "Parent"
+            }
+        }
+    };
+    body.push(parent);
+}
 
 
 bodyString = JSON.stringify(body);
 
 do {
-    if (conflictRetry == 0){
+    if (conflictRetry == 0) {
         throw new Error('Limit reached while retrying conflict failure');
     }
     status = sendRequest(bodyString);
     conflictRetry -= 1;
 } while (status == 409);
 
-function sendRequest(bodyString){
+function sendRequest(bodyString) {
     console.log('INFO: Sending update work item request');
     try {
         var apiResponse = apiRequest.write(bodyString);
     } catch (e) {
         throw ('Azure DevOps:Issue submitting work item update request. \n' + e);
     }
-    
+
     output['responseCode'] = apiResponse.statusCode;
-    
+
     if (apiResponse.statusCode === 200) {
         payload = JSON.parse(apiResponse.body);
         output['result'] = 'succeeded';
@@ -191,7 +207,7 @@ function sendRequest(bodyString){
         console.log("WARN: There was an update conflict.");
         output['result'] = 'failed';
         return 409;
-    }else {
+    } else {
         output['result'] = 'failed';
         throw ('ERROR:Azure DevOps:Unknown');
     }
