@@ -58,7 +58,7 @@ function queryUser(endpoint, organization, searchTerm) {
         };
     } catch (e) {
         console.log('ERROR:Issue setting up query');
-        throw e;
+        throw e.message;
     }
 
     try {
@@ -71,7 +71,7 @@ function queryUser(endpoint, organization, searchTerm) {
         }
     } catch (e) {
         console.log('ERROR:Issue finding user');
-        throw e;
+        throw e.message;
     }
 
     return apiResponse;
