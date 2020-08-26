@@ -165,6 +165,17 @@ if (input['parentWorkItemID'] !== "" && input['parentWorkItemID'] !== null && in
     };
     body.push(parent);
 }
+if (input['assigneeDescriptor'] !== "" && input['assigneeDescriptor'] !== null && input['assigneeDescriptor'] !== undefined) {
+    assignee = {
+        "op": "add",
+        "path": "/fields/System.AssignedTo",
+        "from": null,
+        "value": {
+            "descriptor": input['assigneeDescriptor']
+        }
+    };
+    body.push(assignee);
+}
 
 
 bodyString = JSON.stringify(body);
