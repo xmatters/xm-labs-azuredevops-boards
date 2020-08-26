@@ -6,7 +6,6 @@ try {
     const endpoint = 'Azure DevOps';
     const httpMethod = 'PATCH';
     const contentType = "application/json-patch+json";
-    const path = '/' + input['organization'].trim() + '/' + input['workItemTeamProject'].trim() + '/_apis/wit/workitems/' + input['workItemId'] + '?suppressNotifications=' + suppressNotifications + '&api-version=5.1';
     var conflictRetry = 3;
 
     var suppressNotifications = 'false';
@@ -18,6 +17,8 @@ try {
             suppressNotifications = 'false';
         }
     }
+    
+    const path = '/' + input['organization'].trim() + '/' + input['workItemTeamProject'].trim() + '/_apis/wit/workitems/' + input['workItemId'] + '?suppressNotifications=' + suppressNotifications + '&api-version=5.1';
 
     var apiRequest = http.request({
         'endpoint': endpoint,
