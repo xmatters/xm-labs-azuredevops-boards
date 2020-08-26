@@ -3,6 +3,12 @@
  * Depending on the type of work item there maybe more or less fields or different field name for similar data.
  */
 
+const endpoint = 'Azure DevOps';
+const httpMethod = 'PATCH';
+const contentType = "application/json-patch+json";
+const path = '/' + input['organization'].trim() + '/' + input['workItemTeamProject'].trim() + '/_apis/wit/workitems/' + input['workItemId'] + '?suppressNotifications=' + suppressNotifications + '&api-version=5.1';
+var conflictRetry = 3;
+
 var suppressNotifications = 'false';
 if (input['suppressNotifications'] !== "" && input['suppressNotifications'] !== null && input['suppressNotifications'] !== undefined) {
     suppressNotifications = input['suppressNotifications'].trim().toLowerCase();
@@ -13,13 +19,10 @@ if (input['suppressNotifications'] !== "" && input['suppressNotifications'] !== 
     }
 }
 
-const contentType = "application/json-patch+json";
-const path = '/' + input['organization'].trim() + '/' + input['workItemTeamProject'].trim() + '/_apis/wit/workitems/' + input['workItemId'] + '?suppressNotifications=' + suppressNotifications + '&api-version=5.1';
-
 var apiRequest = http.request({
-    'endpoint': 'Azure DevOps',
+    'endpoint': endpoint,
     'path': path,
-    'method': 'PATCH',
+    'method': httpMethod,
     'headers': {
         'Content-Type': contentType
     }
@@ -27,7 +30,6 @@ var apiRequest = http.request({
 
 console.log('Work Item Type: ' + String(input['workItemType']));
 console.log('INFO: Building work item');
-
 
 /**
  * Using this pattern you can add values to other work item fields as well. You will need to determine
@@ -148,33 +150,49 @@ if (input['workItemTags'] !== "" && input['workItemTags'] !== null && input['wor
     body.push(risk);
 }
 
+
 bodyString = JSON.stringify(body);
 
-console.log('INFO: Sending update work item request');
-try {
-    var apiResponse = apiRequest.write(bodyString);
-} catch (e) {
-    throw ('Azure DevOps:Issue submitting work item update request. \n' + e);
-}
+do {
+    if (conflictRetry == 0){
+        throw new Error('Limit reached while retrying conflict failure');
+    }
+    status = sendRequest(bodyString);
+    conflictRetry -= 1;
+} while (status == 409);
 
-output['responseCode'] = apiResponse.statusCode;
-
-if (apiResponse.statusCode === 200) {
-    payload = JSON.parse(apiResponse.body);
-    output['result'] = 'succeeded';
-    console.log('INFO: Work item creation complete');
-} else if (apiResponse.statusCode === 401) {
-    output['result'] = 'failed';
-    throw ('ERROR:Azure DevOps:Unauthorized.');
-} else if (apiResponse.statusCode === 400) {
-    output['result'] = 'failed';
-    response = JSON.parse(apiResponse.body);
-    throw ('ERROR:Azure DevOps:' + response['message']);
-} else if (apiResponse.statusCode === 404) {
-    output['result'] = 'failed';
-    response = JSON.parse(apiResponse.body);
-    throw ('ERROR:Azure DevOps:' + response['message']);
-} else {
-    output['result'] = 'failed';
-    throw ('ERROR:Azure DevOps:Unknown');
+function sendRequest(bodyString){
+    console.log('INFO: Sending update work item request');
+    try {
+        var apiResponse = apiRequest.write(bodyString);
+    } catch (e) {
+        throw ('Azure DevOps:Issue submitting work item update request. \n' + e);
+    }
+    
+    output['responseCode'] = apiResponse.statusCode;
+    
+    if (apiResponse.statusCode === 200) {
+        payload = JSON.parse(apiResponse.body);
+        output['result'] = 'succeeded';
+        console.log('INFO: Work item creation complete');
+        return 200;
+    } else if (apiResponse.statusCode === 401) {
+        output['result'] = 'failed';
+        throw ('ERROR:Azure DevOps:Unauthorized.');
+    } else if (apiResponse.statusCode === 400) {
+        output['result'] = 'failed';
+        response = JSON.parse(apiResponse.body);
+        throw ('ERROR:Azure DevOps:' + response['message']);
+    } else if (apiResponse.statusCode === 404) {
+        output['result'] = 'failed';
+        response = JSON.parse(apiResponse.body);
+        throw ('ERROR:Azure DevOps:' + response['message']);
+    } else if (apiResponse.statusCode === 409) {
+        console.log("WARN: There was an update conflict.");
+        output['result'] = 'failed';
+        return 409;
+    }else {
+        output['result'] = 'failed';
+        throw ('ERROR:Azure DevOps:Unknown');
+    }
 }
