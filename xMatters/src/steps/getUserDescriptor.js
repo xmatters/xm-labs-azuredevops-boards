@@ -1,24 +1,24 @@
 try {
-    const organization = input['organization'];
-    const searchTerm = input['searchTerm'];
     const endpoint = 'Azure DevOps - Management';
 
-    console.log('INFO:Searching for user with term "' + searchTerm + '"');
+    if (typeof input['searchTerm'] == 'string') {
+        let searchTerm = input['searchTerm'].trim();
+        if (searchTerm !== '') {
+            console.log('INFO:Searching for user with term "' + searchTerm + '"');
+            const response = queryUser(endpoint, input['organization'], searchTerm);
 
-    if (searchTerm !== null && searchTerm != "" && searchTerm !== undefined) {
-        var response = queryUser(endpoint, organization, searchTerm);
+            const user = JSON.parse(response.body);
 
-        var user = JSON.parse(response.body);
-
-        if (user.count == 1) {
-            output['descriptor'] = user.value[0].descriptor;
-            output['displayName'] = user.value[0].displayName;
-        } else if (user.count > 1) {
-            throw new Error('More than one user matches term ' + searchTerm);
-        } else if (user.count == 0) {
-            throw new Error('No user matching term ' + searchTerm);
-        } else {
-            throw new Error('Unknown Error');
+            if (user.count == 1) {
+                output['descriptor'] = user.value[0].descriptor;
+                output['displayName'] = user.value[0].displayName;
+            } else if (user.count > 1) {
+                throw new Error('More than one user matches term ' + searchTerm);
+            } else if (user.count == 0) {
+                throw new Error('No user matching term ' + searchTerm);
+            } else {
+                throw new Error('Unknown Error');
+            }
         }
     } else {
         throw new Error('Must provide a search term');
@@ -36,43 +36,35 @@ try {
 
 function queryUser(endpoint, organization, searchTerm) {
     console.log('INFO:Searching for user');
-    var apiRequest = null;
-    var apiResponse = null;
-    var body = null;
+
+    let URLPath = encodeURI('/' + organization + '/_apis/graph/subjectquery?api-version=6.0-preview.1');
+
+    let apiRequest = http.request({
+        'endpoint': endpoint,
+        'path': URLPath,
+        'method': 'POST',
+        'headers': {
+            'Content-Type': 'application/json'
+        }
+    });
+
+    let body = {
+        "query": searchTerm,
+        "subjectKind": ["User"]
+    };
 
     try {
-        var URLPath = encodeURI('/' + organization + '/_apis/graph/subjectquery?api-version=6.0-preview.1');
-
-        apiRequest = http.request({
-            'endpoint': endpoint,
-            'path': URLPath,
-            'method': 'POST',
-            'headers': {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        body = {
-            "query": searchTerm,
-            "subjectKind": ["User"]
-        };
-    } catch (e) {
-        console.log('ERROR:Issue setting up query');
-        throw e.message;
-    }
-
-    try {
-        apiResponse = apiRequest.write(body);
+        const apiResponse = apiRequest.write(body);
 
         if (apiResponse.statusCode != 200) {
             console.log('ERROR:Received bad response during user search');
             console.log('Response Status Code: ' + apiResponse.statusCode);
-            throw apiResponse.body;
+            throw new Error(apiResponse.body);
         }
+        
+        return apiResponse;
     } catch (e) {
         console.log('ERROR:Issue finding user');
-        throw e.message;
+        throw new Error(e.message);
     }
-
-    return apiResponse;
 }
