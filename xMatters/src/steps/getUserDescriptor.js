@@ -1,3 +1,11 @@
+/**
+ * The Azure DevOps user descriptor is what is used to do things like assign someone to a work item. 
+ * This step is used to find a user's Azure DevOps user descriptor using something like their email
+ * address, which is common between their Azure DevOps account and xMatters account. The purpose is
+ * to not require syncing user descriptors from Azure DevOps to xMatters.  Microsoft actually 
+ * discourages storing user descriptors outside of Azure DevOps, because there are case where it
+ * can change.
+ */
 try {
     const endpoint = 'Azure DevOps - Management';
 
