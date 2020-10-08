@@ -24,6 +24,8 @@ This is a closed-loop integration with Azure DevOps Boards. It has a trigger tha
     * [createWorkItem.js](xMatters/src/steps/createWorkItem.js) - source code for step to create a Work Item
     * [updateWorkItem.js](xMatters/src/steps/updateWorkItem.js) - source code for step to update a Work Item
     * [addWorkItemComment.js](xMatters/src/steps/addWorkItemComment.js) - source code for step to add comments to Work Item
+    * [getUserDescriptor.js](xMatters/src/steps/getUserDescriptor.js) - source code for step to get Azure DevOps user descriptor
+    * [getPersonsEmail.js](xMatters/src/steps/getPersonsEmail.js) - source code for step to get an xMatter user's email addresses
 * Azure DevOps
     * [AzureDevOpsWorkItemFields.csv](AzureDevOps/AzureDevOpsWorkItemFields.csv) - CSV table of work item fields I discovered
 
