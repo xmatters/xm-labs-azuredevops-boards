@@ -161,10 +161,14 @@ To use the Create/Update Work Item and Add Comment steps we need to setup creden
         <img src="media/ado-patsetup-3.png" width="500">
     </kbd>
 
-5. For this integration the token should only need read, write, & manage access to Work Items, but as of writing this I have only tested with Full Access.  If you use the this token to perform other actions from xMatters it may need more permissions.
+5. For this integration the token should only need read, write, & manage access to Work Items. To use the step to get an Azure DevOps user's descriptor it will also need read on Graph. As of writing this I have only tested with Full Access. If you use the this token to perform other actions from xMatters it may need more permissions.
 
     <kbd>
         <img src="media/ado-patsetup-4.png" width="500">
+    </kbd>
+    <br>
+    <kbd>
+        <img src="media/ado-patsetup-6.png" width="500">
     </kbd>
 
 6. Now copy the token that is generated.  
@@ -193,6 +197,40 @@ We will now configure the Endpoint in xMatters so that it can connect to Azure D
     <br>
     <kbd>
         <img src="media/xm-endpoint-2.png" width="600">
+    </kbd>
+
+5. For the endpoint Authentication we need to set the following
+    * **Endpoint Type** - Basic
+    * **Username** - this will be the Azure DevOps username of the account you created the Personal Access Token
+    * **Password** - enter the Personal Access Token
+    * **Preemptive** - enabled
+
+    <br>
+    <kbd>
+        <img src="media/xm-endpoint-3.png" width="600">
+    </kbd>
+
+6. Now save the Endpoint configuration
+
+### xMatters - Configure Azure DevOps - Management Endpoint
+Azure DevOps API has several endpoints located at different domains. We will now configure the Endpoint in xMatters so that it can connect to Azure DevOps to perform searches for for users using the Get User Descriptor step.  I am still assuming you are using the imported example workflow.  If you are not then you can still follow along, but you will have to create the resources before you can configure them.
+
+1. Open the **Work Item Created** flow in the **Azure DevOps Boards** workflow
+2. In the top right open the **Components** menu and select **Endpoints**
+
+    <kbd>
+        <img src="media/xm-endpoint-1.png" width="400">
+    </kbd>
+
+3. Select the **Azure DevOps - Management** endpoint.
+4. We will need to set or verify these basic settings
+    * **Name** - I would use "Azure DevOps - Management" because the steps are already set to use this
+    * **Base URL** - https://vssps.dev.azure.com
+    * **Trust self-signed certificates** - disabled
+
+    <br>
+    <kbd>
+        <img src="media/xm-endpoint2-2.png" width="600">
     </kbd>
 
 5. For the endpoint Authentication we need to set the following
