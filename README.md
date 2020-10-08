@@ -230,7 +230,7 @@ Azure DevOps API has several endpoints located at different domains. We will now
 
     <br>
     <kbd>
-        <img src="media/xm-endpoint2-2.png" width="600">
+        <img src="media/xm-endpoint2-1.png" width="600">
     </kbd>
 
 5. For the endpoint Authentication we need to set the following
